@@ -1,0 +1,62 @@
+---
+title: 'ST340 Fundamentals of Machine Learning: Assessment 1'
+date: "2026--27"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+urlcolor: blue
+---
+
+\hfill Released: 13:00 on Monday Week 2, 2026-10-12.
+
+\hfill Deadline: 13:00 on Monday Week 4, 2026-10-26.
+
+# Instructions
+
+* Links and instructions for using the submission portal are available on the module [Moodle page](https://moodle.warwick.ac.uk/course/view.php?id=76217). Please ensure you follow the guidelines provided.
+
+* Any programming work should be completed in either `R` or `Python`. Your report must be created using either `R Markdown` or a `Python Jupyter Notebook`. Submit *two* files:
+
+    1. A knitted PDF document **in A4 format**. The document must be **no more than 15 pages and could be substantially shorter**.
+    2. The corresponding `R Markdown` or `Python interactive notebook` file.
+
+* This assignment contributes 10\% to your overall module grade. In the [Assessment Handbook](https://warwick.ac.uk/fac/sci/statistics/currentstudents/assessment/assessmenthandbookpage/) it is Category C.
+
+* This assignment is assessing your knowledge of under- and and over-fitting, as well as various approaches to model selection. The relevant parts of the lecture notes are Sections 2.4--2.5.
+
+* Please ensure you are familiar with the University's [Guidance on the use of AI](https://warwick.ac.uk/students/academic-essentials/academic-integrity/artificial-intelligence/). For this assignment, permission to use AI is **Limited**. Permitted uses include: clarifying or improving your understanding of concepts from the module; asking for feedback on your work such as to point out errors; writing, debugging, and testing code. You may **not** use AI to write out for you any explanation or discussion which will be included with your answers; this must be written in your own words.
+
+* If you use AI for any purpose you must include a declaration as described in the guidance linked above, which can be appended as a paragraph in your submission. You may include examples of prompts that you used, but you are not required to do so.
+
+* AI is an amazing tool for learning and also an amazing tool to avoid learning. Your mission is to train yourself to use it responsibly.
+
+\clearpage
+
+# 1. Business data
+
+The accompanying file `BusinessData.csv` contains data on the number of businesses in each constituency in England, as well as a variety of social and demographic measurements. The goal of this question is to construct a linear model with the number of businesses as the response. We will treat all covariates and the response as real-valued (rather than integer-valued) for simplicity.
+
+First, load the data and restrict it to the subset of covariates that will be the focus of this question.^[Here, `dep` indicates a measure related to a deprivation index.]
+
+```{r}
+BusinessData <- read.csv("BusinessData.csv")
+
+BusinessData <- BusinessData[,c("Businesses","TotalPopulation2011","prop_village_or_smaller",
+                                "Median_wage_2017","Pop0_15Age","Pop16_64Age",
+                                "Prop_born_in_UK_2011","Health_dep",
+                                "LivingEnvironment_dep","Education_dep",
+                                "Employment_dep")]
+```
+
+(a) Fit a linear model to predict the number of businesses in each constituency using all ten covariates. Plot the predicted against the actual number of businesses in each constituency. \hfill [3 marks]
+
+(b) Compute the Akaike Information Criterion (AIC), Bayesian Information Criterion (BIC), and mean squared error from leave-one-out cross-validation (LOOCV) associated with this model. For AIC and BIC you may use built-in functions, but you should make clear what formula each function computes and the value of any input parameters for this dataset. \hfill [4 marks]
+
+(c) It is suggested that this model is unnecessarily complicated and that one might find a simpler model with similar performance by discarding one or more covariates. For each covariate, construct a linear model to predict the number of businesses with that covariate removed. According to AIC, do you find a better model? \hfill [4 marks]
+
+(d) Starting from the best model with nine covariates, repeat the procedure in part (c), each time removing the single covariate that leads to a model producing the best available AIC for a model of that size. Continue down to the intercept-only model so that you can examine the complete sequence of nested models^[This method is known as *greedy backward stepwise selection*. In a conventional early-stopping implementation, one would stop as soon as no deletion improved AIC.]. Plot AIC as a function of the number of covariates included. Which model do you recommend overall? \hfill [6 marks]
+
+(e) Repeat parts (c) and (d) using BIC and LOOCV instead of AIC. Compare the three methods. \hfill [4 marks]
+
+(f) The plot of mean square error produced by LOOCV against the number of covariates can be regarded as an approximation to the test error of each model. Add the empirical *training* error to your plot. Comment on your results in the context of under- and over-fitting. \hfill [4 marks]
